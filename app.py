@@ -188,12 +188,28 @@ def load_embedding():
 def load_vectorstore(username):
     print("load_vectorstore")
     # Get the load_vectorstore store from Astra DB
-    return AstraDB(
-        embedding=embedding,
-        collection_name=f"vector_context_{username}",
-        token=st.secrets["ASTRA_VECTOR_TOKEN"],
-        api_endpoint=os.environ["ASTRA_VECTOR_ENDPOINT"],
-    )
+    try:
+        db = AstraDB(
+            embedding=embedding,
+            collection_name=f"vector_context_{username}",
+            token=st.secrets["ASTRA_VECTOR_TOKEN"],
+            api_endpoint=os.environ["ASTRA_VECTOR_ENDPOINT"],
+        )
+    except:
+        AstraDB.create_collection(
+            collection_name=f"vector_context_{username}",
+            embedding=embedding,
+            collection_name=f"vector_context_{username}",
+            token=st.secrets["ASTRA_VECTOR_TOKEN"],
+            api_endpoint=os.environ["ASTRA_VECTOR_ENDPOINT"],
+        )
+        db = AstraDB(
+            embedding=embedding,
+            collection_name=f"vector_context_{username}",
+            token=st.secrets["ASTRA_VECTOR_TOKEN"],
+            api_endpoint=os.environ["ASTRA_VECTOR_ENDPOINT"],
+        )
+    return db
     
 # Cache Retriever for future runs
 @st.cache_resource(show_spinner=lang_dict['load_retriever'])
