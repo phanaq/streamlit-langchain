@@ -197,7 +197,6 @@ def load_vectorstore(username):
         )
     except:
         AstraDB.create_collection(
-            collection_name=f"vector_context_{username}",
             embedding=embedding,
             collection_name=f"vector_context_{username}",
             token=st.secrets["ASTRA_VECTOR_TOKEN"],
